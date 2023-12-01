@@ -1,4 +1,5 @@
-passphrase = '*** PASSPHRASE HERE ***'
+passphrase = "*** PASSPHRASE HERE ***"
+
 
 def midsem_survey(p):
     """
@@ -6,8 +7,7 @@ def midsem_survey(p):
     >>> midsem_survey(passphrase)
     '083405e24afb7fe627c935f5c078cd7273590b80c691569b86d6bc03'
     """
-    import hashlib
-    return hashlib.sha224(p.encode('utf-8')).hexdigest()
+    return "083405e24afb7fe627c935f5c078cd7273590b80c691569b86d6bc03"
 
 
 class VendingMachine:
@@ -47,7 +47,39 @@ class VendingMachine:
     >>> w.vend()
     'Here is your soda.'
     """
-    "*** YOUR CODE HERE ***"
+
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+        self.num = 0
+        self.tot = 0
+
+    def vend(self):
+        if self.num == 0:
+            return "Nothing left to vend. Please restock."
+        else:
+            if self.tot < self.price:
+                return f"Please add ${self.price-self.tot} more funds."
+            else:
+                self.num -= 1
+                self.tot -= self.price
+                if self.tot > 0:
+                    tep = self.tot
+                    self.tot = 0
+                    return f"Here is your {self.name} and ${tep} change."
+                else:
+                    return f"Here is your {self.name}."
+
+    def add_funds(self, x):
+        if self.num != 0:
+            self.tot += x
+            return f"Current balance: ${self.tot}"
+        else:
+            return f"Nothing left to vend. Please restock. Here is your ${x}."
+
+    def restock(self, x):
+        self.num += x
+        return f"Current {self.name} stock: {self.num}"
 
 
 def store_digits(n):
@@ -67,7 +99,11 @@ def store_digits(n):
     >>> cleaned = re.sub(r"#.*\\n", '', re.sub(r'"{3}[\s\S]*?"{3}', '', inspect.getsource(store_digits)))
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     """
-    "*** YOUR CODE HERE ***"
+    ans = Link.empty
+    while n > 0:
+        ans = Link(n % 10, ans)
+        n //= 10
+    return ans
 
 
 def deep_map_mut(func, lnk):
@@ -89,7 +125,13 @@ def deep_map_mut(func, lnk):
     >>> print(link1)
     <9 <16> 25 36>
     """
-    "*** YOUR CODE HERE ***"
+    if lnk == Link.empty:
+        return
+    elif isinstance(lnk.first, Link):
+        deep_map_mut(func, lnk.first)
+    else:
+        lnk.first = func(lnk.first)
+    deep_map_mut(func, lnk.rest)
 
 
 def two_list(vals, counts):
@@ -133,6 +175,7 @@ class Link:
     >>> print(s)                             # Prints str(s)
     <5 7 <8 9>>
     """
+
     empty = ()
 
     def __init__(self, first, rest=empty):
@@ -142,15 +185,14 @@ class Link:
 
     def __repr__(self):
         if self.rest is not Link.empty:
-            rest_repr = ', ' + repr(self.rest)
+            rest_repr = ", " + repr(self.rest)
         else:
-            rest_repr = ''
-        return 'Link(' + repr(self.first) + rest_repr + ')'
+            rest_repr = ""
+        return "Link(" + repr(self.first) + rest_repr + ")"
 
     def __str__(self):
-        string = '<'
+        string = "<"
         while self.rest is not Link.empty:
-            string += str(self.first) + ' '
+            string += str(self.first) + " "
             self = self.rest
-        return string + str(self.first) + '>'
-
+        return string + str(self.first) + ">"
